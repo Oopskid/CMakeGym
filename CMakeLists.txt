@@ -1,0 +1,1 @@
+include(scripts/debug.cmake)
