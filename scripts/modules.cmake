@@ -30,8 +30,32 @@ macro(startProj projectName #[[version, description, url, languages]])
    
    project(${projectName} ${ARGV1} ${ARGV2} ${ARGV3} ${ARGV4})
 
+   set(INCLUDES "")
+
 endmacro()
 
 macro(endProj projectName)
    
 endmacro()
+
+# Linking files to targets
+function(addIncludesAuto location fileTypes #[[filterName]])
+
+endfunction()
+
+function(addIncludes location sources #[[filterName]])
+   
+   set(PREINCLUDES "")
+   foreach(SOURCE ${${sources}}) # WHY IS THIS A THING
+      set(PREINCLUDES "${location}${SOURCE} ${PREINCLUDES}")
+   endforeach()
+   logInf("Adding ${PREINCLUDES}to includes")
+   set(INCLUDES "${INCLUDES} ${PREINCLUDES}")
+
+   # Manage filter
+   if(${ARGC} GREATER 2)
+      set(FILTERSLIST "${ARGV2} ${FILTERSLIST}")
+      set(FILTER_${ARGV2} "${PREINCLUDES} ${FILTER_${ARGV2}}")
+      logInf("(filtered by ${ARGV2})")
+   endif()
+endfunction()
