@@ -1,6 +1,8 @@
 include_guard(DIRECTORY)
 # Provides basic, common functionality for cmake scripts and modules
 
+set(STEALTH FALSE CACHE INTERNAL BOOL) # Suppresses some visible options
+
 # Common setup for modules
 macro(startScript moduleName)
    include_guard(DIRECTORY)
@@ -21,7 +23,10 @@ macro(startProj projectName #[[version, description, url, languages]])
          return()
       endif()
    endif()
-   set(${includeName} TRUE CACHE BOOL "Includes project ${projectName} in the build")
+
+   if(NOT ${STEALTH})
+      set(${includeName} TRUE CACHE BOOL "Includes project ${projectName} in the build")
+   endif()
    
    project(${projectName} ${ARGV1} ${ARGV2} ${ARGV3} ${ARGV4})
 
