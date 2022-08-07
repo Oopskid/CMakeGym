@@ -18,7 +18,7 @@ endmacro()
 # Setup a project as the main one
 macro(setMain name)
    if(${isVS})
-      set(VS_STARTUP_PROJECT ${name})
+      set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT ${name})
    endif()
 endmacro()
 

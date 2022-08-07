@@ -1,7 +1,5 @@
 # Better CMake debugging
 
-include(scripts/core.cmake)
-
 # CMake debugging
 set(CM_DEBUG FALSE CACHE BOOL "Sets whether CMake scripts will be debugged")
 # CMake verbose prints
