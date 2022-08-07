@@ -31,6 +31,8 @@ macro(startProj projectName #[[version, description, url, languages]])
    project(${projectName} ${ARGV1} ${ARGV2} ${ARGV3} ${ARGV4})
 
    set(INCLUDES "")
+   set(INCLUDE_DIRS "")
+   set(FILTERSLIST "")
 
 endmacro()
 
@@ -40,22 +42,29 @@ endmacro()
 
 # Linking files to targets
 function(addIncludesAuto location fileTypes #[[filterName]])
+   # Search for each file type in the directory and append to list
+   set(FETCHEDFILES "" CACHE INTERNAL STRING)   
+   foreach(FORMAT ${${fileTypes}})
+      FILE(GLOB found LIST_DIRECTORIES FALSE RELATIVE ${location} ${location}/*${FORMAT})
+      set(FETCHEDFILES "${found} ${FETCHEDFILES}")
+   endforeach()
 
+   addIncludes(${location}/ FETCHEDFILES ${ARGV2}) # Slightly counterintuitive pathing
 endfunction()
 
 function(addIncludes location sources #[[filterName]])
-   
+   # Manage included
    set(PREINCLUDES "")
    foreach(SOURCE ${${sources}}) # WHY IS THIS A THING
       set(PREINCLUDES "${location}${SOURCE} ${PREINCLUDES}")
    endforeach()
    logInf("Adding ${PREINCLUDES}to includes")
-   set(INCLUDES "${INCLUDES} ${PREINCLUDES}")
+   set(INCLUDES "${PREINCLUDES} ${INCLUDES}")
 
-   # Manage filter
+   # Manage filters
    if(${ARGC} GREATER 2)
       set(FILTERSLIST "${ARGV2} ${FILTERSLIST}")
-      set(FILTER_${ARGV2} "${PREINCLUDES} ${FILTER_${ARGV2}}")
+      set(FILTER_${ARGV2} "${PREINCLUDES} ${FILTER_${ARGV2}}" CACHE INTERNAL STRING)
       logInf("(filtered by ${ARGV2})")
    endif()
 endfunction()
