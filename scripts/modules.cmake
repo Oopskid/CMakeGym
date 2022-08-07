@@ -1,5 +1,6 @@
 include_guard(DIRECTORY)
 # Provides basic, common functionality for cmake scripts and modules
+include(${CMAKE_CURRENT_LIST_DIR}/debug.cmake)
 
 set(STEALTH FALSE CACHE INTERNAL BOOL) # Suppresses some visible options
 
@@ -26,11 +27,11 @@ macro(startProj projectName #[[version, description, url, languages]])
 
    if(NOT ${STEALTH})
       set(${includeName} TRUE CACHE BOOL "Includes project ${projectName} in the build")
+      logInfLevel(3 "Starting project ${projectName}")
    endif()
    
    project(${projectName} ${ARGV1} ${ARGV2} ${ARGV3} ${ARGV4})
 
-   logInf(START)
    set(INCLUDES "" CACHE INTERNAL STRING)
    set(INCLUDE_DIRS "" CACHE INTERNAL STRING)
    set(FILTERSLIST "" CACHE INTERNAL STRING) # Can cause junk, fault of user
