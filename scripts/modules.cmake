@@ -30,9 +30,10 @@ macro(startProj projectName #[[version, description, url, languages]])
    
    project(${projectName} ${ARGV1} ${ARGV2} ${ARGV3} ${ARGV4})
 
-   set(INCLUDES "")
-   set(INCLUDE_DIRS "")
-   set(FILTERSLIST "")
+   logInf(START)
+   set(INCLUDES "" CACHE INTERNAL STRING)
+   set(INCLUDE_DIRS "" CACHE INTERNAL STRING)
+   set(FILTERSLIST "" CACHE INTERNAL STRING) # Can cause junk, fault of user
 
 endmacro()
 
@@ -45,7 +46,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/fileops.cmake)
 # Linking files to targets
 function(addIncludesAuto location fileTypes #[[filterName]])
    set(FETCHEDFILES "" CACHE INTERNAL STRING)   
-   getDirFiles(FETCHEDFILES ${location} ${fileTypes})
+   getDirFiles(FETCHEDFILES ${location};${fileTypes})
 
    addIncludes(${location}/ FETCHEDFILES ${ARGV2}) # Slightly counterintuitive pathing
 endfunction()
@@ -54,15 +55,32 @@ function(addIncludes location sources #[[filterName]])
    # Manage included
    set(PREINCLUDES "")
    foreach(SOURCE ${${sources}}) # WHY IS THIS A THING
-      set(PREINCLUDES "${location}${SOURCE} ${PREINCLUDES}")
+      set(PREINCLUDES "${location}${SOURCE};${PREINCLUDES}")
    endforeach()
-   logInf("Adding ${PREINCLUDES}to includes")
-   set(INCLUDES "${PREINCLUDES} ${INCLUDES}")
+   logInf("Adding ${PREINCLUDES}to includes" )
+   set(INCLUDES "${PREINCLUDES};${INCLUDES}" CACHE INTERNAL STRING)
 
    # Manage filters
    if(${ARGC} GREATER 2)
-      set(FILTERSLIST "${ARGV2} ${FILTERSLIST}")
-      set(FILTER_${ARGV2} "${PREINCLUDES} ${FILTER_${ARGV2}}" CACHE INTERNAL STRING)
+      set(FILTERSLIST "${ARGV2};${FILTERSLIST}" CACHE INTERNAL STRING)
+      set(FILTER_${ARGV2} "${PREINCLUDES};${FILTER_${ARGV2}}" CACHE INTERNAL STRING)
       logInf("(filtered by ${ARGV2})")
    endif()
+endfunction()
+
+# Add include directory to list
+macro(addIncludeDir dir)
+   set(INCLUDE_DIRS "${dir} ${INCLUDE_DIRS}")
+endmacro()
+
+# Finally, configure the includes
+function(bindIncludes target #[[+ flags]])
+   
+   # Filters
+   foreach(FILTER ${FILTERSLIST})
+      source_group(${FILTER} FILES ${FILTER_${FILTER}})
+      unset(FILTER_${FILTER} CACHE)
+   endforeach()
+   set(FILTERSLIST "")
+
 endfunction()
