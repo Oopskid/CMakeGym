@@ -40,14 +40,12 @@ macro(endProj projectName)
    
 endmacro()
 
+include(${CMAKE_CURRENT_LIST_DIR}/fileops.cmake)
+
 # Linking files to targets
 function(addIncludesAuto location fileTypes #[[filterName]])
-   # Search for each file type in the directory and append to list
    set(FETCHEDFILES "" CACHE INTERNAL STRING)   
-   foreach(FORMAT ${${fileTypes}})
-      FILE(GLOB found LIST_DIRECTORIES FALSE RELATIVE ${location} ${location}/*${FORMAT})
-      set(FETCHEDFILES "${found} ${FETCHEDFILES}")
-   endforeach()
+   getDirFiles(FETCHEDFILES ${location} ${fileTypes})
 
    addIncludes(${location}/ FETCHEDFILES ${ARGV2}) # Slightly counterintuitive pathing
 endfunction()
