@@ -6,6 +6,8 @@ include(scripts/core.cmake)
 set(CM_DEBUG FALSE CACHE BOOL "Sets whether CMake scripts will be debugged")
 # CMake verbose prints
 set(CM_VERBOSE FALSE CACHE BOOL "Sets whether verbose logs will be printed")
+# CMake debug level
+set(CM_DLEVEL 1 CACHE STRING "Sets debug level")
 # CMake call stack
 set(CM_CALLSTACK "" CACHE INTERNAL STRING)
 # Log
@@ -22,7 +24,7 @@ if(CM_DEBUG)
       list(POP_BACK CM_CALLSTACK)
    endmacro()
 
-   #Macro for logging error info (with call stack)
+   # Macro for logging error info (with call stack)
    macro(logErrorINTERNAL shorttxt longtxt)
       if(CM_VERBOSE)
          message(SEND_ERROR ${CM_CONSOLEPX} ${longtxt} " with trace: \n" ${CM_CALLSTACK})
