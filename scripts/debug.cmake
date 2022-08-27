@@ -9,7 +9,7 @@ set(CM_DLEVEL 1 CACHE STRING "Sets debug level")
 # CMake call stack
 set(CM_CALLSTACK "" CACHE INTERNAL STRING)
 # Log
-set(CM_CONSOLEPX ">> " CACHE INTERNAL STRING FORCE)
+set(CM_CONSOLEPX ">> " CACHE INTERNAL STRING)
 
 if(CM_DEBUG)
    # Macros for recording a call stack
