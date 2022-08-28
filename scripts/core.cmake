@@ -2,18 +2,18 @@ include(${CMAKE_CURRENT_LIST_DIR}/modules.cmake)
 startScript(gymcore)
 # Core script to manage CMake'd projects
 
-# VS switch
-if(CMAKE_GENERATOR MATCHES "Visual Studio")
-   set(isVS true)
-else()
-   set(isVS false)
-endif()
-
 # Define a dead function
 macro(deadfunc name)
    macro(${name})
    endmacro()
 endmacro()
+
+# VS switch
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+   set(isVS 1)
+else()
+   set(isVS 0)
+endif()
 
 # Setup a project as the main one
 macro(setMain name)
@@ -23,3 +23,6 @@ macro(setMain name)
 endmacro()
 
 endScript(gymcore)
+
+# Post includes
+include(${CMAKE_CURRENT_LIST_DIR}/commoninc.cmake)

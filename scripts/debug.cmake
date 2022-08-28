@@ -1,15 +1,21 @@
 # Better CMake debugging
 
 # CMake debugging
-set(CM_DEBUG FALSE CACHE BOOL "Sets whether CMake scripts will be debugged")
+set(CM_DEBUG 0 CACHE BOOL "Sets whether CMake scripts will be debugged")
 # CMake verbose prints
-set(CM_VERBOSE FALSE CACHE BOOL "Sets whether verbose logs will be printed")
+set(CM_VERBOSE 0 CACHE BOOL "Sets whether verbose logs will be printed")
 # CMake debug level
 set(CM_DLEVEL 1 CACHE STRING "Sets debug level")
 # CMake call stack
 set(CM_CALLSTACK "" CACHE INTERNAL STRING)
 # Log
 set(CM_CONSOLEPX ">> " CACHE INTERNAL STRING)
+
+# Define a dead function
+macro(deadfunc name)
+   macro(${name})
+   endmacro()
+endmacro()
 
 if(CM_DEBUG)
    # Macros for recording a call stack
@@ -64,6 +70,7 @@ if(CM_DEBUG)
 else()
    deadfunc("sfunc")
    deadfunc("efunc")
-   deadfunc("loginf")
+   deadfunc("logInf")
+   deadfunc("logInfLevel")
    deadfunc("logError")
 endif()

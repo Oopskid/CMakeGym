@@ -2,7 +2,16 @@ include_guard(DIRECTORY)
 # Provides basic, common functionality for cmake scripts and modules
 include(${CMAKE_CURRENT_LIST_DIR}/debug.cmake)
 
-set(STEALTH FALSE CACHE INTERNAL BOOL) # Suppresses some visible options
+set(STEALTH 0 CACHE INTERNAL BOOL) # Suppresses some visible options
+
+# Strict once only
+macro(onceStrict uniqueName)
+   # Anti recache
+   if(STRICT_${uniqueName}) 
+      return()
+   endif()
+   set(STRICT_${uniqueName} 1 CACHE INTERNAL BOOL)
+endmacro()
 
 # Common setup for modules
 macro(startScript moduleName)
@@ -39,6 +48,21 @@ macro(startProj projectName #[[version, description, url, languages]])
 endmacro()
 
 macro(endProj projectName)
+   
+endmacro()
+
+# Common setup for libraries (abstract libraries too)
+macro(startLib libraryName)
+   include_guard(DIRECTORY)
+
+   # Ignore this library scope depending on preferance
+   set(USE_${libraryName} 1 CACHE BOOL "Includes library ${libraryName}")
+   if(NOT USE_${libraryName})
+      return()
+   endif()
+endmacro()
+
+macro(endLib libraryName)
    
 endmacro()
 
