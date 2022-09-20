@@ -2,16 +2,9 @@
 
 # CMake debugging
 set(CM_DEBUG 0 CACHE BOOL "Sets whether CMake scripts will be debugged")
-# CMake verbose prints
-set(CM_VERBOSE 0 CACHE BOOL "Sets whether verbose logs will be printed")
-# CMake debug level
-set(CM_DLEVEL 1 CACHE STRING "Sets debug level")
-# CMake call stack
-set(CM_CALLSTACK "" CACHE INTERNAL STRING)
 # Log
 set(CM_CONSOLEPX ">> " CACHE INTERNAL STRING)
-# Whether to continue after throws
-set(CM_DHARD 1 CACHE BOOL "Sets behaviour for exceptions")
+
 
 # Define a dead function
 macro(deadfunc name)
@@ -20,6 +13,16 @@ macro(deadfunc name)
 endmacro()
 
 if(CM_DEBUG)
+
+   # CMake verbose prints
+   set(CM_VERBOSE 0 CACHE BOOL "Sets whether verbose logs will be printed")
+   # CMake debug level
+   set(CM_DLEVEL 1 CACHE STRING "Sets debug level")
+   # CMake call stack
+   set(CM_CALLSTACK "" CACHE INTERNAL STRING)
+   # Whether to continue after throws
+   set(CM_DHARD 1 CACHE BOOL "Sets behaviour for exceptions")
+
    # Macros for recording a call stack
    # Would be nice to auto append to functions
    macro(sfunc name)
