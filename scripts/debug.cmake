@@ -10,6 +10,8 @@ set(CM_DLEVEL 1 CACHE STRING "Sets debug level")
 set(CM_CALLSTACK "" CACHE INTERNAL STRING)
 # Log
 set(CM_CONSOLEPX ">> " CACHE INTERNAL STRING)
+# Whether to continue after throws
+set(CM_DHARD 1 CACHE BOOL "Sets behaviour for exceptions")
 
 # Define a dead function
 macro(deadfunc name)
@@ -26,6 +28,15 @@ if(CM_DEBUG)
    
    macro(efunc)
       list(POP_BACK CM_CALLSTACK)
+   endmacro()
+
+   # Macro for handling assertions
+   macro(softThrow txt)
+      if(CM_DHARD)
+         message(FATAL_ERROR "${CM_CONSOLEPX} Hard throw: ${txt}")
+      else()
+         message(WARNING "${CM_CONSOLEPX} Thrown: ${txt}")
+      endif()
    endmacro()
 
    # Macro for logging error info (with call stack)
@@ -73,4 +84,5 @@ else()
    deadfunc("logInf")
    deadfunc("logInfLevel")
    deadfunc("logError")
+   deadfunc("softThrow")
 endif()
