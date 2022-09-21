@@ -1,0 +1,14 @@
+"script" {
+.xml
+.html
+.css
+.js
+.lua
+}
+"text" {
+.txt
+.rtf;.rtx
+}
+"data" {
+.csv
+}
