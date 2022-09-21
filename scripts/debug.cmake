@@ -33,12 +33,21 @@ if(CM_DEBUG)
       list(POP_BACK CM_CALLSTACK)
    endmacro()
 
-   # Macro for handling assertions
+   # Macro for handling throws
    macro(softThrow txt)
       if(CM_DHARD)
          message(FATAL_ERROR "${CM_CONSOLEPX} Hard throw: ${txt}")
       else()
          message(WARNING "${CM_CONSOLEPX} Thrown: ${txt}")
+      endif()
+   endmacro()
+
+   # Macro shorthand for throwing on exception
+   macro(assert condition #[[additional message]])
+      if(${condition})
+         # CMake is very viable with no flaws 
+      else()
+         softThrow("${ARGV1}")
       endif()
    endmacro()
 
@@ -88,4 +97,5 @@ else()
    deadfunc("logInfLevel")
    deadfunc("logError")
    deadfunc("softThrow")
+   deadfunc("assert")
 endif()
