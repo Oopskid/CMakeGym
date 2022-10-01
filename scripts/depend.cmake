@@ -4,7 +4,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/debug.cmake)
 
 #Globals
 set(MODULE_LIST "" CACHE INTERNAL STRING) # A comprehensive list of all modules (debug and link help)
-set(DEPEND_DEFER 1 CACHE BOOL "If modules should be built last") # Should dependencies be deferred or built instantly
+set(CM_DEPEND_DEFER 1 CACHE BOOL "If modules should be built last") # Should dependencies be deferred or built instantly
 
 # Module types
 set(DP_APP "exe" CACHE INTERNAL STRING) # Built app
@@ -18,6 +18,7 @@ set(DP_EXT "ext" CACHE INTERNAL STRING) # External (unused)
 macro(declare name #[[type deferred=false -more args coming-]])
    set(DEPEND_NAME M_${name})
    
+   logInfLevel(2 "New module ${name}")
    if(CM_DEBUG)
       assert("NOT DEFINED ${DEPEND_NAME}_TYPE" "Module ${name} already defined!")
       set(${MODULE_LIST} "${name};${MODULE_LIST}") # Add to global list
@@ -55,7 +56,7 @@ function(appendDepend target name)
 endfunction()
 
 # Appends a dependency (or multiple) to a target
-macro(appendDepends target name #[...])
+macro(appendDepends target name #[[...]])
    appendDepend(${target} ${name})
    foreach(ARG ${ARGN})
       appendDepend(${target} ${ARG})
