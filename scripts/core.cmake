@@ -22,6 +22,11 @@ macro(setMain name)
    endif()
 endmacro()
 
+# Calls a function via reflection (version dependent)
+macro(reflectCall funcName #[[args]])
+   cmake_language(CALL ${funcName} ${ARGN})
+endmacro()
+
 endScript(gymcore)
 
 # Post includes

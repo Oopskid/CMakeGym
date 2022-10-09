@@ -1,5 +1,6 @@
 startScript(depend)
 # Dependency tracker, resolver and dictator
+include(${CMAKE_CURRENT_LIST_DIR}/core.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/debug.cmake)
 
 #Globals
@@ -33,10 +34,9 @@ macro(declare name #[[type deferred=false -more args coming-]])
    if(${ARGC} GREATER 2)
       set(${DEPEND_NAME}_DEF ${ARGV2} CACHE INTERNAL BOOL)
       if(${DEPEND_NAME}_DEF)
-         set(${DEPEND_NAME}_READY 0 CACHE INTERNAL BOOL) # Cannot be ready if deferred
+         set(${DEPEND_NAME}_RY 0 CACHE INTERNAL BOOL) # Cannot be ready if deferred
       endif()
    endif()
-
 endmacro()
 
 # Appends a dependency to a target
@@ -62,5 +62,35 @@ macro(appendDepends target name #[[...]])
       appendDepend(${target} ${ARG})
    endforeach()
 endmacro()
+
+# Make a dependency now
+function(makeDepend name)
+   set(DEPEND_NAME M_${name})
+   set(DEPEND_TYPE ${${DEPEND_NAME}_TYPE})
+   set(FN_CALL ${DEPEND_TYPE}_MAKER)
+
+   # --Prebuild--
+   # Check dependencies, build each if required
+   foreach(SUBDEPEND ${${name}_DS})
+      set(SUBDEPEND_NAME M_${SUBDEPEND})
+      if(DEFINED ${SUBDEPEND_NAME})
+         # Exists
+         if(NOT ${SUBDEPEND_NAME}_RY)
+            # Requires build
+            makeDepend(${SUBDEPEND})
+            # Validate
+            assert("${SUBDEPEND_NAME}_RY" "Module ${SUBDEPEND} was not built for parent ${name}")
+         endif()
+      endif()
+   endforeach()
+
+   # --Call the builder--
+   reflectCall(${FN_CALL})
+
+   # --Post build--
+   # Validation
+   assert("${DEPEND_NAME}_RY" "Module ${name} was not built successfully")
+
+endif()
 
 endScript(depend)
