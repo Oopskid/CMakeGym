@@ -2,18 +2,12 @@ startScript(depend)
 # Dependency tracker, resolver and dictator
 include(${CMAKE_CURRENT_LIST_DIR}/core.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/debug.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/logic.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/cont/dependbuilders.cmake)
 
 #Globals
 set(MODULE_LIST "" CACHE INTERNAL STRING) # A comprehensive list of all modules (debug and link help)
 set(CM_DEPEND_DEFER 1 CACHE BOOL "If modules should be built last") # Should dependencies be deferred or built instantly
-
-# Module types
-set(DP_APP "exe" CACHE INTERNAL STRING) # Built app
-set(DP_DLIB "dlib" CACHE INTERNAL STRING) # Built dynamic library
-set(DP_SLIB "lib" CACHE INTERNAL STRING) # Built static library
-set(DP_PACK "pac" CACHE INTERNAL STRING) # Resources (file management)
-set(DP_MAKE "mak" CACHE INTERNAL STRING) # Build scripts
-set(DP_EXT "ext" CACHE INTERNAL STRING) # External (unused)
 
 # Declares a module which can be used
 macro(declare name #[[type deferred=false -more args coming-]])
@@ -40,7 +34,7 @@ macro(declare name #[[type deferred=false -more args coming-]])
 endmacro()
 
 # Appends a dependency to a target
-function(appendDepend target name)
+function(appendDepend target name #[[...]])
    # Append dependency to list
    set(${target}_DS "${name};${${target}_DS}" CACHE INTERNAL STRING)
 
@@ -85,7 +79,7 @@ function(makeDepend name)
    endforeach()
 
    # --Call the builder--
-   reflectCall(${FN_CALL})
+   reflectCall(${FN_CALL} ${name})
 
    # --Post build--
    # Validation
