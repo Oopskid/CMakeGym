@@ -7,10 +7,10 @@ include(${CMAKE_CURRENT_LIST_DIR}/cont/dependbuilders.cmake)
 
 #Globals
 set(MODULE_LIST "" CACHE INTERNAL STRING) # A comprehensive list of all modules (debug and link help)
-set(CM_DEPEND_DEFER 1 CACHE BOOL "If modules should be built last") # Should dependencies be deferred or built instantly
+set(CM_DEPEND_DEFER 0 CACHE BOOL "If modules should be built last") # Should dependencies be deferred or built instantly
 
 # Declares a module which can be used
-macro(declare name #[[type deferred=false -more args coming-]])
+function(declare name #[[type deferred=false built=false -more args coming-]])
    set(DEPEND_NAME M_${name})
    
    logInfLevel(2 "New module ${name}")
@@ -18,11 +18,12 @@ macro(declare name #[[type deferred=false -more args coming-]])
       assert("NOT DEFINED ${DEPEND_NAME}_TYPE" "Module ${name} already defined!")
       set(${MODULE_LIST} "${name};${MODULE_LIST}") # Add to global list
       set(${DEPEND_NAME}_REFS "0" CACHE INTERNAL STRING) # Times referenced
-   endif()   
+   endif()
 
    set(${DEPEND_NAME}_TYPE "${ARGV1}" CACHE INTERNAL STRING) # Denotes type
-   set(${DEPEND_NAME}_RY 1 CACHE INTERNAL BOOL) # Flag when built/prepared
-   set(${DEPEND_NAME}_DEF 0 CACHE INTERNAL BOOL) # Is deferred? (deferred is inherited from children)
+   set(${DEPEND_NAME}_RY 1 CACHE INTERNAL BOOL) # Flag when ready to be consumed by other modules
+   set(${DEPEND_NAME}_FIN 0 CACHE INTERNAL BOOL) # Flag when actually built
+   set(${DEPEND_NAME}_DEF ${CM_DEPEND_DEFER} CACHE INTERNAL BOOL) # Is deferred? (deferred is inherited from children)
 
     # Manual deferred
    if(${ARGC} GREATER 2)
@@ -31,7 +32,14 @@ macro(declare name #[[type deferred=false -more args coming-]])
          set(${DEPEND_NAME}_RY 0 CACHE INTERNAL BOOL) # Cannot be ready if deferred
       endif()
    endif()
-endmacro()
+   # Manual built
+   if(${ARGC} GREATER 3)
+      # Must be ready to be built
+      if(${DEPEND_NAME}_RY)
+         set(${DEPEND_NAME}_FIN ${ARGV3} CACHE INTERNAL BOOL)
+      endif()
+   endif()
+endfunction()
 
 # Appends a dependency to a target
 function(appendDepend target name #[[...]])

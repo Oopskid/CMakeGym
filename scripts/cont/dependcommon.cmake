@@ -12,6 +12,11 @@ macro(readyDepend name)
    set(M_${name}_RY 1 CACHE INTERNAL BOOL)
 endmacro()
 
+# Flags a module was built
+macro(builtDepend name)
+   set(M_${name}_FIN 1 CACHE INTERNAL BOOL)
+endmacro()
+
 # Clears stamp lists (used for accumulating pledges from dependencies towards their parent)
 function(clearStamps)
    set(STAMPS_TOPLEVEL "" CACHE INTERNAL STRING) # Dependency targets satisfying Top-Level status of CMake
