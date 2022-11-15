@@ -22,6 +22,13 @@ macro(endScript moduleName)
    
 endmacro()
 
+# Common setup/clearing of cached data used for targets
+macro(cleanTarget)
+   set(INCLUDES "" CACHE INTERNAL STRING)
+   set(INCLUDE_DIRS "" CACHE INTERNAL STRING)
+   set(FILTERSLIST "" CACHE INTERNAL STRING) # Can cause junk, fault of user
+endmacro()
+
 # Common setup for projects
 macro(startProj projectName #[[version, description, url, languages]])
    include_guard(DIRECTORY)
@@ -41,9 +48,7 @@ macro(startProj projectName #[[version, description, url, languages]])
    
    project(${projectName} ${ARGV1} ${ARGV2} ${ARGV3} ${ARGV4})
 
-   set(INCLUDES "" CACHE INTERNAL STRING)
-   set(INCLUDE_DIRS "" CACHE INTERNAL STRING)
-   set(FILTERSLIST "" CACHE INTERNAL STRING) # Can cause junk, fault of user
+   cleanTarget()
 
 endmacro()
 
@@ -55,11 +60,21 @@ endmacro()
 macro(startLib libraryName)
    include_guard(DIRECTORY)
 
-   # Ignore this library scope depending on preferance
-   set(USE_${libraryName} 1 CACHE BOOL "Includes library ${libraryName}")
-   if(NOT USE_${libraryName})
-      return()
+   # Ignore this library scope depending on preference
+   set(useName USE_${libraryName})
+   if(DEFINED ${useName})
+      if(NOT ${useName})
+         return()
+      endif()
    endif()
+
+   if(NOT ${STEALTH})
+      set(${useName} 1 CACHE BOOL "Includes lib ${libraryName} in the build")
+      logInfLevel(3 "Starting lib ${libraryName}")
+   endif()
+
+   cleanTarget()
+
 endmacro()
 
 macro(endLib libraryName)
