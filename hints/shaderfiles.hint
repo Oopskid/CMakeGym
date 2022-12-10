@@ -1,0 +1,13 @@
+"hlsl" {
+.hlsl
+.hlsli
+}
+"glsl" {
+.glsl
+.frag
+.vert
+.geom
+.comp
+.tese
+.tesc
+}

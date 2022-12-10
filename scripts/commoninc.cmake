@@ -15,5 +15,7 @@ file(READ ${CM_DIR_HINTLIB}/compilefiles.hint file)
 hintdecipher(${file} "CMFT_COMPILE_")
 file(READ ${CM_DIR_HINTLIB}/libfiles.hint file)
 hintdecipher(${file} "CMFT_LIB_")
+file(READ ${CM_DIR_HINTLIB}/shaderfiles.hint file)
+hintdecipher(${file} "CMFT_SHADER_")
 
 endLib(CMCommonIncs)
