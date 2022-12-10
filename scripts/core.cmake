@@ -10,9 +10,9 @@ endmacro()
 
 # VS switch
 if(CMAKE_GENERATOR MATCHES "Visual Studio")
-   set(isVS 1)
+   set(isVS 1 CACHE INTERNAL BOOL)
 else()
-   set(isVS 0)
+   set(isVS 0 CACHE INTERNAL BOOL)
 endif()
 
 # Setup a project as the main one
