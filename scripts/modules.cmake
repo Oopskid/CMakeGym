@@ -3,6 +3,7 @@ include_guard(DIRECTORY)
 include(${CMAKE_CURRENT_LIST_DIR}/debug.cmake)
 
 set(STEALTH 0 CACHE INTERNAL BOOL) # Suppresses some visible options
+set(CM_AUTO_FILTER 1 CACHE BOOL "Whether to use relative paths to automatically filter sources")
 
 # Strict once only
 macro(onceStrict uniqueName)
@@ -83,10 +84,18 @@ endmacro()
 
 include(${CMAKE_CURRENT_LIST_DIR}/fileops.cmake)
 
+# Appends a filter for sources
+macro(addFilter sources filter)
+   if(NOT DEFINED FILTER_${filter})
+      set(FILTERSLIST "${filter};${FILTERSLIST}" CACHE INTERNAL STRING)
+   endif()
+   set(FILTER_${filter} "${sources};${FILTER_${filter}}" CACHE INTERNAL STRING)
+endmacro()
+
 # Linking files to targets
 function(addIncludesAuto location fileTypes #[[filterName]])
    set(FETCHEDFILES "" CACHE INTERNAL STRING)   
-   getDirFiles(FETCHEDFILES ${location};${fileTypes})
+   getDirFiles(FETCHEDFILES ${location};${fileTypes} CM_AUTO_FILTER)
 
    addIncludes(${location}/ FETCHEDFILES ${ARGV2}) # Slightly counterintuitive pathing
 endfunction()
@@ -97,14 +106,22 @@ function(addIncludes location sources #[[filterName]])
    foreach(SOURCE ${${sources}}) # WHY IS THIS A THING
       set(PREINCLUDES "${location}${SOURCE};${PREINCLUDES}")
    endforeach()
-   logInf("Adding ${PREINCLUDES}to includes" )
+   logInf("Adding ${PREINCLUDES} to includes" )
    set(INCLUDES "${PREINCLUDES};${INCLUDES}" CACHE INTERNAL STRING)
 
    # Manage filters
-   if(${ARGC} GREATER 2)
-      set(FILTERSLIST "${ARGV2};${FILTERSLIST}" CACHE INTERNAL STRING)
-      set(FILTER_${ARGV2} "${PREINCLUDES};${FILTER_${ARGV2}}" CACHE INTERNAL STRING)
-      logInf("(filtered by ${ARGV2})")
+   if(CM_AUTO_FILTER)
+      foreach(SOURCE ${${sources}}) # WHY IS THIS A THING
+         getDir(${SOURCE} DIR)
+         set(DIR ${ARGV2}/${DIR})
+         addFilter(${location}${SOURCE} ${DIR})
+      endforeach()
+      logInf("(auto filtered by ${ARGV2})")
+   else()
+      if(${ARGC} GREATER 2)
+         addFilter(${PREINCLUDES} ${ARGV2})
+         logInf("(filtered by ${ARGV2})")
+      endif()
    endif()
 endfunction()
 

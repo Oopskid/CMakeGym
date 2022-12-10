@@ -5,12 +5,25 @@ include(${CMAKE_CURRENT_LIST_DIR}/logic.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/strings.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/debug.cmake)
 
-macro(getDirFiles returnList location fileTypes)
+# Returns exclusive format files of a directory
+macro(getDirFiles returnList location fileTypes #[[isRecursive]])
+    set(GLOBTYPE GLOB)
+    if(${ARGC} GREATER 3)
+       if(${ARGV3})
+          set(GLOBTYPE GLOB_RECURSE)
+       endif()
+    endif()
+
    # Search for each file type in the directory and append to list 
    foreach(FORMAT ${${fileTypes}})
-      FILE(GLOB found LIST_DIRECTORIES FALSE RELATIVE ${location} ${location}/*${FORMAT})
+      FILE(${GLOBTYPE} found LIST_DIRECTORIES FALSE RELATIVE ${location} ${location}/*${FORMAT})
       set(${returnList} "${found}${${returnList}}")
    endforeach()
+endmacro()
+
+# Returns the directory of a path
+macro(getDir path outVar)
+   string(REGEX MATCH .*/ ${outVar} ${path})
 endmacro()
 
 # Returns text within braces
