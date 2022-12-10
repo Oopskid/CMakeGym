@@ -17,7 +17,7 @@ macro(getDirFiles returnList location fileTypes #[[isRecursive]])
    # Search for each file type in the directory and append to list 
    foreach(FORMAT ${${fileTypes}})
       FILE(${GLOBTYPE} found LIST_DIRECTORIES FALSE RELATIVE ${location} ${location}/*${FORMAT})
-      set(${returnList} "${found}${${returnList}}")
+      set(${returnList} "${found};${${returnList}}")
    endforeach()
 endmacro()
 
