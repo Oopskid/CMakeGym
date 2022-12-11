@@ -84,6 +84,11 @@ endmacro()
 
 include(${CMAKE_CURRENT_LIST_DIR}/fileops.cmake)
 
+# Add include directory to list
+macro(addIncludeDir dir)
+   set(INCLUDE_DIRS "${dir};${INCLUDE_DIRS}" CACHE INTERNAL STRING)
+endmacro()
+
 # Appends a filter for sources
 macro(addFilter sources filter)
    if(NOT DEFINED FILTER_${filter})
@@ -101,6 +106,8 @@ function(addIncludesAuto location fileTypes #[[filterName]])
 endfunction()
 
 function(addIncludes location sources #[[filterName]])
+   addIncludeDir(${location})
+
    # Manage included
    set(PREINCLUDES "")
    foreach(SOURCE ${${sources}}) # WHY IS THIS A THING
@@ -125,14 +132,11 @@ function(addIncludes location sources #[[filterName]])
    endif()
 endfunction()
 
-# Add include directory to list
-macro(addIncludeDir dir)
-   set(INCLUDE_DIRS "${dir} ${INCLUDE_DIRS}")
-endmacro()
-
 # Finally, configure the includes
 function(bindIncludes target #[[+ flags]])
-   
+   target_include_directories(${target} PUBLIC "${INCLUDE_DIRS}")
+   set(INCLUDE_DIRS "")
+
    # Filters
    foreach(FILTER ${FILTERSLIST})
       source_group(${FILTER} FILES ${FILTER_${FILTER}})
