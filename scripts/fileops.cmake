@@ -26,6 +26,16 @@ macro(getDir path outVar)
    string(REGEX MATCH .*/ ${outVar} ${path})
 endmacro()
 
+# Returns the filename from a path
+macro(getFilename path outVar)
+   string(REGEX MATCH $[/]?.* ${outVar} ${path})
+endmacro()
+
+# Returns the filename from a path, excluding type
+macro(getPureFilename path outVar)
+   string(REGEX MATCH $[/]?.*[.]? ${outVar} ${path})
+endmacro()
+
 # Returns text within braces
 macro(getBraced text delimfront delimback out)
    set(regexpr "[" ${delimfront} "].*[" ${delimback} "]")
