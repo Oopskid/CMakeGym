@@ -21,6 +21,7 @@ macro(getDirFiles returnList location fileTypes #[[isRecursive]])
    endforeach()
 endmacro()
 
+# TODO: utilise cmake_path operations for newer cmake
 # Returns the directory of a path
 macro(getDir path outVar)
    string(REGEX MATCH .*/ ${outVar} ${path})
@@ -28,12 +29,13 @@ endmacro()
 
 # Returns the filename from a path
 macro(getFilename path outVar)
-   string(REGEX MATCH $[/]?.* ${outVar} ${path})
+   string(REGEX MATCH "([^/]*)?$" ${outVar} ${path})
 endmacro()
 
 # Returns the filename from a path, excluding type
 macro(getPureFilename path outVar)
-   string(REGEX MATCH $[/]?.*[.]? ${outVar} ${path})
+   getFilename(${path} ${outVar})
+   string(REGEX MATCH "[^.]*" ${outVar} ${${outVar}})
 endmacro()
 
 # Returns text within braces
