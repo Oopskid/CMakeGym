@@ -45,6 +45,11 @@ macro(defineShaders target type shaders #[[strictlyFormatted]])
       getPureFilename(${shader} shaderFilename)
       string(REPLACE "${HLSL_${target}_WORKDIRECTORY}" "" shaderRelFile "${shader}")
       getDir(${shaderRelFile} shaderRel)
+      # Soft link this shader
+      set_property(
+            DIRECTORY
+            APPEND
+            PROPERTY CMAKE_CONFIGURE_DEPENDS "${workDir}/${shaderRelFile}")
       # Formatted
       if(NOT HLSL_${target}_COPYDIRECTORY STREQUAL "")
          add_custom_command(TARGET ${target}
