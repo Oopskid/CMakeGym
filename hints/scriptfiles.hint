@@ -1,3 +1,9 @@
 "batch" {
 .bat
 }
+"python" {
+.py
+}
+"lua" {
+.lua
+}
