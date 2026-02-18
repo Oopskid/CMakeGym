@@ -56,7 +56,6 @@ macro(defineShaders target type shaders #[[strictlyFormatted]])
             POST_BUILD
             COMMAND ${CMAKE_COMMAND} 
             ARGS -E copy_if_different "${workDir}/${shaderRelFile}" "${trueCopyDir}/${shaderRelFile}"
-            MAIN_DEPENDENCY ${shader}
             COMMENT "HLSL COPY ${shader}"
             WORKING_DIRECTORY ${workDir}
             VERBATIM)
@@ -64,8 +63,8 @@ macro(defineShaders target type shaders #[[strictlyFormatted]])
       # Compiled
       if(NOT HLSL_${target}_OUTPUTDIRECTORY STREQUAL "" AND compileBatch)
          add_custom_command(TARGET ${target}
+		    POST_BUILD
             COMMAND ${HLSL_SHADER_GLOBAL_COMPILER} /nologo /E main /T ${type}_${HLSL_${target}_SHADER_MODEL} $<IF:$<CONFIG:DEBUG>,/Od,/O${HLSL_SHADER_GLOBAL_OPTIMIZATION}> /Zi /Fo ${trueOutputDir}/${shaderRel}/${shaderFilename}.cso ${workDir}/${shaderRelFile}
-            MAIN_DEPENDENCY ${shader}
             COMMENT "HLSL COMPILE ${shader}"
             WORKING_DIRECTORY ${workDir}
             VERBATIM)
