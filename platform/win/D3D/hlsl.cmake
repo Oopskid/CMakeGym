@@ -9,7 +9,12 @@ set(HLSL_SHADER_GLOBAL_OPTIMIZATION "2" CACHE STRING "The optimization level of 
 set(HLSL_SHADER_GLOBAL_WORK_DIRECTORY "" CACHE STRING "The default working directory of shaders")
 set(HLSL_SHADER_GLOBAL_OUTPUT_DIRECTORY "shaders" CACHE STRING "The default output directory of compiled shaders")
 set(HLSL_SHADER_GLOBAL_COPY_DIRECTORY "shaders" CACHE STRING "The default output directory to copy shaders resources to")
-set(HLSL_SHADER_GLOBAL_COMPILER "fxc.exe" CACHE STRING "The hlsl compiler to use")
+
+if(${HLSL_SHADER_GLOBAL_MODEL_MAJOR} GREATER 5)
+   set(HLSL_SHADER_GLOBAL_COMPILER "dxc.exe" CACHE STRING "The hlsl compiler to use")
+else()
+   set(HLSL_SHADER_GLOBAL_COMPILER "fxc.exe" CACHE STRING "The hlsl compiler to use")
+endif()
 
 # Known shader types
 set(HLSL_TYPE_VERTEX "vs" CACHE INTERNAL STRING) # Vertex
@@ -18,6 +23,8 @@ set(HLSL_TYPE_COMPUTE "cs" CACHE INTERNAL STRING) # Compute
 set(HLSL_TYPE_HULL "hs" CACHE INTERNAL STRING) # Hull
 set(HLSL_TYPE_DOMAIN "ds" CACHE INTERNAL STRING) # Domain
 set(HLSL_TYPE_GEOMETRY "gs" CACHE INTERNAL STRING) # Geometry
+set(HLSL_TYPE_MESH "ms" CACHE INTERNAL STRING) # Mesh
+set(HLSL_TYPE_AMPLIFY "as" CACHE INTERNAL STRING) # Amplification
 set(HLSL_TYPE_HEADER "lib" CACHE INTERNAL STRING) # Header
 
 macro(defineShaders target type shaders #[[strictlyFormatted]])
