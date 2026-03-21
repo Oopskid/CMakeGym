@@ -1,8 +1,10 @@
 "c", "c++" {
 .h
 .impl
+.idl
 }
 "c++" {
 .hpp
 .impl
+.idl
 }
